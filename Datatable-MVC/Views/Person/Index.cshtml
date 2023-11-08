@@ -1,4 +1,4 @@
-﻿@model List<User>
+﻿@model List<Person>
 
 @{
     Layout = "_TestLayout";
@@ -15,7 +15,7 @@
             <tr>
                 <th>ID</th>
                 <th>Name</th>
-                <th>Details</th>
+                <th>Email</th>
             </tr>
         </thead>
         <tbody>
@@ -24,7 +24,7 @@
                 <tr>
                     <td>@user.Id</td>
                     <td>@user.Name</td>
-                    <td>@user.Details</td>
+                    <td>@user.Email</td>
                     <td>
                         <button class="btn btn-primary showDetailsButton" data-id="@user.Id">Show Details</button>
                     </td>
@@ -49,7 +49,7 @@
                         <tr>
                             <th>ID</th>
                             <th>Name</th>
-                            <th>Details</th>
+                            <th>Email</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -87,7 +87,7 @@
                             "columns": [
                                 { "data": "id" },
                                 { "data": "name" },
-                                { "data": "details" }
+                                { "data": "email" }
                             ]
                         });
                     } else {

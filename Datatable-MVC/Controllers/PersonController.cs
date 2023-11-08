@@ -13,27 +13,27 @@ namespace Datatable_MVC.Controllers
 
         public IActionResult GetUserDetailsData(int id)
         {
-            User user = GetUserDetailsById(id);
+            Person user = GetUserDetailsById(id);
             return Json(user);
         }
 
-        private List<User> GetSampleUsers()
+        private List<Person> GetSampleUsers()
         {
-            var users = new List<User>
+            var users = new List<Person>
             {
-                new User { Id = 1, Name = "Luffy", Details = "luffy@gmail.com" },
-                new User { Id = 2, Name = "Zoro", Details = "zoro@gmail.com" },
-                new User { Id = 3, Name = "Sanji", Details = "sanji@gmail.com" },
+                new Person { Id = 1, Name = "Luffy", Email = "luffy@gmail.com" },
+                new Person { Id = 2, Name = "Zoro", Email = "zoro@gmail.com" },
+                new Person { Id = 3, Name = "Sanji", Email = "sanji@gmail.com" },
             };
 
             return users;
         }
 
-        private User GetUserDetailsById(int id)
+        private Person GetUserDetailsById(int id)
         {
 
             var users = GetSampleUsers();
-            User user = users.FirstOrDefault(u => u.Id == id);
+            Person user = users.FirstOrDefault(u => u.Id == id);
             return user;
         }
     }
