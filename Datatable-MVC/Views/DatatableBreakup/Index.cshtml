@@ -1,0 +1,89 @@
+﻿@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Datatable-breakup";
+}
+
+<Button>List Datatable</Button>
+
+@model IEnumerable<Datatable_MVC.D_Entities.Department>
+
+<table id="departmentTable" class="display table table-bordered">
+    <thead class="thead-dark">
+        <tr>
+            <th>Department ID</th>
+            <th>Department Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model != null)
+        {
+            @foreach (var department in Model)
+            {
+                <tr data-id="@department.DepartmentId" style="cursor:pointer">
+                    <td>@department.DepartmentId</td>
+                    <td>@department.DepartmentName</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@section scripts {
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            var table = $('#departmentTable').DataTable({
+                paging: false,
+                info: false,
+                searching: false
+            });
+
+            $('#departmentTable tbody').on('click', 'tr', function () {
+                debugger;
+                var clickedRow = $(this);
+                var departmentId = clickedRow.attr('data-id');
+                console.log('Department ID:', departmentId);
+
+                var row = table.row(this);
+
+                if (row.child.isShown()) {
+                    row.child.hide();
+                    clickedRow.removeClass('shown');
+                } else {
+                    $.ajax({
+                        url: '/DatatableBreakup/GetEmployeesByDepartmentId?departmentId=' + departmentId,
+                        method: 'GET',
+                        dataType: 'json',
+                        success: function (data) {
+                            console.log('Received Data:', data);
+                            row.child(format(data)).show();
+                            clickedRow.addClass('shown');
+                        },
+                        error: function (xhr, textStatus, errorThrown) {
+                            console.error('Error fetching employee data:', errorThrown);
+                        }
+                    });
+                }
+            });
+
+            function format(data) {
+                var html = '<table class="table table-dark" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
+                html += '<tr><th>Employee ID</th><th>Employee Name</th></tr>';
+
+                for (var i = 0; i < data.length; i++) {
+                    html += '<tr>';
+                    html += '<td>' + data[i].employeeId + '</td>';
+                    html += '<td>' + data[i].employeeName + '</td>';
+                    html += '</tr>';
+                }
+
+                html += '</table>';
+                return html;
+            }
+        });
+    </script>
+}
+
+
