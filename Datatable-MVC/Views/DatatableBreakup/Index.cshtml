@@ -3,8 +3,6 @@
     ViewData["Title"] = "Datatable-breakup";
 }
 
-<Button>List Datatable</Button>
-
 @model IEnumerable<Datatable_MVC.D_Entities.Department>
 
 <table id="departmentTable" class="display table table-bordered">
@@ -28,6 +26,12 @@
     </tbody>
 </table>
 
+<div id="spinner-overlay" style="display:none">
+    <div id="spinner" class="spinner-border" role="status">
+        <span class="sr-only">Loading...</span> 
+    </div>
+</div>
+
 @section scripts {
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script>
@@ -41,16 +45,27 @@
             });
 
             $('#departmentTable tbody').on('click', 'tr', function () {
-                debugger;
+                $('#spinner-overlay').show();
                 var clickedRow = $(this);
                 var departmentId = clickedRow.attr('data-id');
                 console.log('Department ID:', departmentId);
+
+                $('#departmentTable tbody tr.shown').each(function () {
+                    var otherRow = $(this);
+                    var otherdeptId = otherRow.attr('data-id');
+                    if (otherdeptId !== departmentId) {
+                        var otherDataTableRow = table.row(otherRow);
+                        otherDataTableRow.child.hide();
+                        otherRow.removeClass('shown');
+                    }
+                });
 
                 var row = table.row(this);
 
                 if (row.child.isShown()) {
                     row.child.hide();
                     clickedRow.removeClass('shown');
+                    $('#spinner-overlay').hide();
                 } else {
                     $.ajax({
                         url: '/DatatableBreakup/GetEmployeesByDepartmentId?departmentId=' + departmentId,
@@ -58,11 +73,15 @@
                         dataType: 'json',
                         success: function (data) {
                             console.log('Received Data:', data);
-                            row.child(format(data)).show();
-                            clickedRow.addClass('shown');
-                        },
-                        error: function (xhr, textStatus, errorThrown) {
-                            console.error('Error fetching employee data:', errorThrown);
+
+                            // Simulate a 3-second delay before rendering employee data
+                            setTimeout(function () {
+                                var employeeTableHtml = format(data);
+                                row.child(employeeTableHtml).show();
+                                clickedRow.addClass('shown');
+                                clickedRow.find('.spinner-border').parent().remove();
+                                $('#spinner-overlay').hide();
+                            }, 1000);
                         }
                     });
                 }
@@ -85,5 +104,3 @@
         });
     </script>
 }
-
-
